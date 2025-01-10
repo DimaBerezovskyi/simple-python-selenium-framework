@@ -113,7 +113,7 @@ The linting configuration defines rules that dictate the checks performed. Custo
 ### Secrets
 To secure our passwords or sensitive data, we store them in an encrypted form. For this, we use the [secure-test-automation](https://pypi.org/project/secure-test-automation/) library.
 implementation on framework side: utils/crypto.py
-The encryption key is stored in `/config/key.properties` (this file should be added to `.gitignore`) for local testing.  
+**Pay attention** The encryption key is stored in `/config/key.properties` (this file should be added to `.gitignore`) for local testing.  
 For executing tests in remote environments (e.g., BrowserStack, Jenkins, etc.), we have integrated the Vault HashiCorp library.  
 
 ```python
