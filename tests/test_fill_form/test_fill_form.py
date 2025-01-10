@@ -20,7 +20,5 @@ class TestFillForm:
 
         # Use the password provided by the fixture
         password = get_password
-        print(password)
-
         fill.enter_username("selenium framework")
         fill.enter_password(password)
