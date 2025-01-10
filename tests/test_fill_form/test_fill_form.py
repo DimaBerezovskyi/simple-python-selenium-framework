@@ -11,7 +11,6 @@ def get_password():
     secure = Secure()
     read = YAMLReader.read("data.yaml", to_simple_namespace=True)
     password = read.users.john.details.password
-    print(password)
     return secure.decrypt_password(password)
 
 
