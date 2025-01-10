@@ -112,9 +112,7 @@ def log(
             logger_instance.annotate(logs, level)
 
             # Call the original method, passing *args and **kwargs
-            return func(
-                self, *args, **kwargs
-            )
+            return func(self, *args, **kwargs)
 
         return wrapper
 

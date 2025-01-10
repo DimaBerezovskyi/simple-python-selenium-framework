@@ -18,6 +18,8 @@ A simple UI automation framework built with:
 - Integrated with **GitHub Actions** CI workflow for Darwin (Mac) and Linux.
 - Supports multiple environments: **dev**, **stage**.
 - Generates **pytest reports** and **custom logs**.
+- Secure Secrets Handling: Sensitive data like passwords are encrypted and stored securely.
+- Test Data Management: Integrated with YAML files for test data storage and access.
 
 ## Getting Started
 
@@ -25,6 +27,7 @@ A simple UI automation framework built with:
 
 - Python 3.8 - 3.12
 - If you're not using macOS with ARM64 architecture or a Selenium version below 4.24.0, please upload the appropriate driver corresponding to your OS to the `resources` directory.
+- secure-test-automation for encrypting sensitive data
 
 ### Local Usage
 
@@ -68,7 +71,7 @@ A simple UI automation framework built with:
 | 1. Drivers factory: local, remote, [Chrome, Firefox]                                                      | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
 | 2. `pytest.ini` config: addopts, errors, markers                                                          | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
 | 3. Environments: dev, stag, prod                                                                          | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 4. Secrets                                                                                                | ![Status](https://img.shields.io/badge/TODO-yellow)      |
+| 4. Secrets                                                                                                | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
 | 5. Utilities: YAML reader, logger                                                                          | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
 | 6. BasePage: wait strategy, base actions                                                                  | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
 | 7. Properties: make properties helper                                                                       | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
@@ -107,4 +110,20 @@ The linting configuration defines rules that dictate the checks performed. Custo
    ```plaintext
    $FilePathRelativeToProjectRoot$ --config .ruff.toml
    ```
+### Secrets
+To secure our passwords or sensitive data, we store them in an encrypted form. For this, we use the [secure-test-automation](https://pypi.org/project/secure-test-automation/) library.
+implementation on framework side: utils/crypto.py
+The encryption key is stored in `/config/key.properties` (this file should be added to `.gitignore`) for local testing.  
+For executing tests in remote environments (e.g., BrowserStack, Jenkins, etc.), we have integrated the Vault HashiCorp library.  
+
+```python
+@pytest.fixture
+def get_password():
+    secure = Secure()
+    read = YAMLReader.read("data.yaml", to_simple_namespace=True)
+    password = read.users.john.details.password
+    return secure.decrypt_password(password)
+```
+
+
 ### Demo tool https://demoqa.com/text-box

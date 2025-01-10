@@ -126,3 +126,7 @@ class BasePage:
     def refresh(self):
         """Refresh the current page."""
         self.driver.refresh()
+    
+    def scroll_to_element(self, element):
+        """Sroll to element"""
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)

@@ -1,4 +1,4 @@
-from core.driver import ChromeRemoteDriver, FirefoxDriver, LocalDriver
+from core_driver.driver import ChromeRemoteDriver, FirefoxDriver, LocalDriver
 from utils.error_handler import ErrorHandler, ErrorType
 from utils.logger import Logger, LogLevel
 

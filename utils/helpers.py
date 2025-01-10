@@ -23,6 +23,7 @@ def retry(retries=3, delay=2):
 
 def timing(func):
     """Perform a timing function"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.time()

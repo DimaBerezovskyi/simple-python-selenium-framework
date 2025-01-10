@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from webdriver_manager.chrome import ChromeDriverManager
-from core.driver_options import _init_driver_options
+from core_driver.driver_options import _init_driver_options
 from utils.error_handler import ErrorHandler, ErrorType
 from utils.logger import Logger, LogLevel
 from properties import Properties
@@ -57,16 +57,13 @@ class LocalDriver(Driver):
             driver_path = ChromeDriverManager().install()
             options = _init_driver_options(dr_type=dr_type)
             driver = webdriver.Chrome(
-                service=ChromeService(executable_path=driver_path),
-                options=options
+                service=ChromeService(executable_path=driver_path), options=options
             )
             log.info(
                 f"Created local Chrome driver with session: {driver.session_id}"
             )
         except Exception as e:
-            log.error(
-                f"Failed to create Chrome driver  {e}"
-            )
+            log.error(f"Failed to create Chrome driver  {e}")
             driver = webdriver.Chrome(
                 service=ChromeService(_get_driver_path(dr_type)),
                 options=_init_driver_options(dr_type=dr_type),
@@ -82,18 +79,14 @@ class ChromeRemoteDriver(Driver):
             command_executor=RemoteConnection("your remote URL"),
             desired_capabilities={"LT:Options": caps},  # noqa
         )
-        log.info(
-            f"Remote Chrome driver created with session: {driver.session_id}"
-        )
+        log.info(f"Remote Chrome driver created with session: {driver.session_id}")
         return driver
 
 
 class FirefoxDriver(Driver):
     def create_driver(self, environment=None, dr_type=None):
         try:
-            driver = webdriver.Firefox(
-                options=_init_driver_options(dr_type=dr_type)
-            )
+            driver = webdriver.Firefox(options=_init_driver_options(dr_type=dr_type))
             log.info(f"Created Firefox driver with session: {driver.session_id}")
         except Exception as e:
             driver = webdriver.Chrome(

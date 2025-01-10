@@ -13,7 +13,7 @@ class ErrorHandler:
         ErrorType.ENV_ERROR: "Unsupported environment",
         ErrorType.EMPTY_URL_ERROR: "Environment variable is empty or not found",
         ErrorType.UNSUPPORTED_DRIVER_TYPE: "Unsupported driver type",
-        ErrorType.DRIVER_NOT_FOUND: "WebDriver binary not found at "
+        ErrorType.DRIVER_NOT_FOUND: "WebDriver binary not found at ",
     }
 
     @staticmethod
