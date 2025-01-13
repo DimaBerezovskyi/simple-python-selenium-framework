@@ -49,7 +49,7 @@ class Driver(ABC):
 
 
 class LocalDriver(Driver):
-    def create_driver(self, environment=None, dr_type="local"):
+    def create_driver(self, environment=None, dr_type="chromedriver"):
         """Tries to use ChromeDriverManager to install the latest driver,
         and if it fails, it falls back to a locally stored driver in resources."""
         driver = None

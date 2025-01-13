@@ -1,7 +1,12 @@
 import json
-from typing import Dict
+import pathlib
+from typing import Dict, Optional
 
 import requests
+from pathlib import Path
+import zipfile
+from io import BytesIO
+
 from bs4 import BeautifulSoup
 
 from scraper.os_checker import OSChecker
@@ -11,24 +16,23 @@ class ChromePageScraper:
     URL_LATEST = (
         "https://googlechromelabs.github.io/chrome-for-testing/#stable"
     )
-    URL_ALL = "https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json" # noqa
+    URL_ALL = "https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json"
 
     @staticmethod
     def __fetch(url: str) -> requests.Response:
         response = requests.get(url)
-        response.raise_for_status()  # Raises an exception if status code is not 200 # noqa
+        response.raise_for_status()
         return response
 
     @staticmethod
     def parse_latest() -> Dict[str, str]:
-        # returns a latest stable chrome driver
         elements_list = []
         drivers = {}
         page = ChromePageScraper.__fetch(ChromePageScraper.URL_LATEST)
 
         soup = BeautifulSoup(page.text, "html.parser")
         element = soup.select_one(
-            "section#stable.status-not-ok div.table-wrapper table tbody tr.status-ok" # noqa
+            "section#stable.status-not-ok div.table-wrapper table tbody tr.status-ok"
         )
 
         if not element:
@@ -55,12 +59,18 @@ class ChromePageScraper:
             print(drivers[os_name])
 
     @staticmethod
-    def get_chromedriver(platform=None, version=None, milestone=None):
+    def get_chromedriver(platform=None,
+                         version=None,
+                         milestone=None,
+                         d_dir: Optional[pathlib.Path] = None,
+                         is_extracted: bool = False
+                         ):
         """
-
         :param platform: os_name and architecture
         :param version: your chrome browser version
         :param milestone: first 3 digits of a browser version: 129 or etc
+        :param d_dir: Directory to save the chromedriver zip file
+        :param is_extracted: extracts the chromedriver
         :return:
         """
         if version is None and milestone is None:
@@ -71,6 +81,8 @@ class ChromePageScraper:
         if platform is None:
             platform = OSChecker.check_os()
 
+        download_dir = d_dir or Path(__file__).resolve().parent.parent / "resources"
+
         # Parse the JSON data
         parsed_data = json.loads(
             ChromePageScraper.__fetch(ChromePageScraper.URL_ALL).text
@@ -79,18 +91,31 @@ class ChromePageScraper:
 
         for milestone_key, milestone_data in milestones_data.items():
             if (milestone is None or milestone_key == milestone) and (
-                version is None or milestone_data["version"] == version
+                    version is None or milestone_data["version"] == version
             ):
                 if "chromedriver" in milestone_data["downloads"]:
-                    for chromedriver_info in milestone_data["downloads"][
-                        "chromedriver"
-                    ]:
+                    for chromedriver_info in milestone_data["downloads"]["chromedriver"]:
                         if (
-                            platform is None
-                            or chromedriver_info["platform"] == platform
+                                platform is None
+                                or chromedriver_info["platform"] == platform
                         ):
-                            return chromedriver_info
+                            url = chromedriver_info["url"]
+                            response = requests.get(url)
+                            response.raise_for_status()  # Check status
 
+                            download_dir.mkdir(parents=True, exist_ok=True)
+                            download_path = download_dir / "chromedriver.zip"
+
+                            with open(download_path, "wb") as file:
+                                file.write(response.content)
+                                print(f"Chromedriver downloaded to {download_dir}")
+
+                            if is_extracted:
+                                with zipfile.ZipFile(BytesIO(response.content)) as zip_ref:
+                                    zip_ref.extractall(download_dir)
+
+                                print(f"Chromedriver extracted to {download_dir}")
+                            return download_path
 
 if __name__ == "__main__":
-    print(ChromePageScraper.get_chromedriver(milestone="129"))
+    ChromePageScraper.get_chromedriver(milestone="131")
