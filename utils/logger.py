@@ -22,10 +22,17 @@ class Singleton(type):
 
 
 class Logger(metaclass=Singleton):
-    def __init__(self, log_lvl: LogLevel = LogLevel.INFO) -> None:
+    def __init__(self,
+                 log_lvl: LogLevel = LogLevel.INFO,
+                 log_target: Literal["console", "file", "both"] = "console") -> None:
+        """Logger
+        :param log_lvl: LogLevel
+        :param log_target: Target for logs (store to file, display to console or both(file and console))
+        """
         self._log = logging.getLogger("selenium")
-        self._log.setLevel(LogLevel.DEBUG.value)
+        self._log.setLevel(LogLevel.INFO.value)
         self.log_file = self._create_log_file()
+        self.log_target = log_target
         self._initialize_logging(log_lvl)
 
     def _create_log_file(self) -> str:
@@ -49,10 +56,19 @@ class Logger(metaclass=Singleton):
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        fh = logging.FileHandler(self.log_file, mode="w")
-        fh.setFormatter(formatter)
-        fh.setLevel(log_lvl.value)
-        self._log.addHandler(fh)
+        # Lot to file or both file and console
+        if self.log_target in ("file", "both"):
+            fh = logging.FileHandler(self.log_file, mode="w")
+            fh.setFormatter(formatter)
+            fh.setLevel(log_lvl.value)
+            self._log.addHandler(fh)
+
+        # Log to console or both file and console
+        if self.log_target in ("console", "both"):
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            ch.setLevel(log_lvl.value)
+            self._log.addHandler(ch)
 
     def get_instance(self) -> logging.Logger:
         return self._log

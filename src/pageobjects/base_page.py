@@ -4,9 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.common.exceptions import (
-    TimeoutException, ElementNotVisibleException
-)
+from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
 
 from utils.helpers import timing
 from utils.logger import log
@@ -126,7 +124,7 @@ class BasePage:
     def refresh(self):
         """Refresh the current page."""
         self.driver.refresh()
-    
+
     def scroll_to_element(self, element):
         """Sroll to element"""
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
