@@ -13,14 +13,15 @@ from utils.yaml_reader import YAMLReader
 log = Logger(log_lvl=LogLevel.INFO).get_instance()
 
 
-def _get_driver_path(driver_type=None):
-    if driver_type is None:
+def _get_project_dir():
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+def _get_driver_path(driver_type):
+    if not driver_type:
         ErrorHandler.raise_error(ErrorType.UNSUPPORTED_DRIVER_TYPE)
 
-    project_dir = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
-    driver_path = os.path.join(project_dir, "resources", driver_type)
+    driver_path = os.path.join(_get_project_dir(), "resources", driver_type)
 
     if not os.path.exists(driver_path):
         ErrorHandler.raise_error(ErrorType.DRIVER_NOT_FOUND, driver_type)
@@ -43,30 +44,31 @@ class Driver(ABC):
         pass
 
     def get_desired_caps(self, browser="chrome"):
-        caps = YAMLReader.read_caps(browser)
-        log.info(f"Capabilities for driver {caps}")
-        return caps
+        try:
+            caps = YAMLReader.read_caps(browser)
+            log.info(f"Capabilities for {browser} driver: {caps}")
+            return caps
+        except Exception as e:
+            log.error(f"Error reading capabilities for {browser}: {e}")
+            ErrorHandler.raise_error(ErrorType.CAPABILITY_NOT_FOUND, browser)
 
 
 class LocalDriver(Driver):
     def create_driver(self, environment=None, dr_type="chromedriver"):
-        """Tries to use ChromeDriverManager to install the latest driver,
-        and if it fails, it falls back to a locally stored driver in resources."""
         driver = None
+        options = _init_driver_options(dr_type=dr_type)
         try:
             driver_path = ChromeDriverManager().install()
-            options = _init_driver_options(dr_type=dr_type)
             driver = webdriver.Chrome(
-                service=ChromeService(executable_path=driver_path), options=options
+                service=ChromeService(executable_path=driver_path),
+                options=options
             )
-            log.info(
-                f"Created local Chrome driver with session: {driver.session_id}"
-            )
+            log.info(f"Local Chrome driver created with session: {driver.session_id}")
         except Exception as e:
-            log.error(f"Failed to create Chrome driver  {e}")
+            log.error(f"ChromeDriverManager failed, falling back to local driver: {e}")
             driver = webdriver.Chrome(
                 service=ChromeService(_get_driver_path(dr_type)),
-                options=_init_driver_options(dr_type=dr_type),
+                options=options
             )
         _configure_driver(driver, environment)
         return driver
@@ -84,17 +86,17 @@ class ChromeRemoteDriver(Driver):
 
 
 class FirefoxDriver(Driver):
-    def create_driver(self, environment=None, dr_type=None):
+    def create_driver(self, environment=None, dr_type="firefox"):
+        driver = None
+        options = _init_driver_options(dr_type=dr_type)
         try:
-            driver = webdriver.Firefox(options=_init_driver_options(dr_type=dr_type))
-            log.info(f"Created Firefox driver with session: {driver.session_id}")
+            driver = webdriver.Firefox(options=options)
+            log.info(f"Firefox driver created with session: {driver.session_id}")
         except Exception as e:
+            log.error(f"Failed to create Firefox driver, falling back to Chrome: {e}")
             driver = webdriver.Chrome(
-                service=ChromeService(_get_driver_path(dr_type)),
-                options=_init_driver_options(dr_type=dr_type),
-            )
-            log.error(
-                f"Failed to create Firefox driver, falling back to Chrome: {e}"
+                service=ChromeService(_get_driver_path("chromedriver")),
+                options=options
             )
         _configure_driver(driver, environment)
         return driver

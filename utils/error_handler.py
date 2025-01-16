@@ -6,6 +6,7 @@ class ErrorType(Enum):
     EMPTY_URL_ERROR = 2
     UNSUPPORTED_DRIVER_TYPE = 3
     DRIVER_NOT_FOUND = 4
+    CAPABILITY_NOT_FOUND = 5
 
 
 class ErrorHandler:
@@ -14,6 +15,7 @@ class ErrorHandler:
         ErrorType.EMPTY_URL_ERROR: "Environment variable is empty or not found",
         ErrorType.UNSUPPORTED_DRIVER_TYPE: "Unsupported driver type",
         ErrorType.DRIVER_NOT_FOUND: "WebDriver binary not found at ",
+        ErrorType.CAPABILITY_NOT_FOUND: "Capabilities file not found"
     }
 
     @staticmethod
