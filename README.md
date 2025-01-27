@@ -59,7 +59,7 @@ A simple UI automation framework built with:
    ```
     
 ### Latest Drivers
-
+- #### CLI util [util](utils/driver_management.md)
 - #### [Chrome Drivers](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 - #### [Firefox Drivers](https://github.com/mozilla/geckodriver)
 - You can download the latest version of the driver for macOS ARM64 using the `chromedriver.sh` script located in the `resources` folder.
