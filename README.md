@@ -25,9 +25,7 @@ A simple UI automation framework built with:
 
 ### Prerequisites
 
-- Python 3.8 - 3.12
 - If you're not using macOS with ARM64 architecture or a Selenium version below 4.24.0, please upload the appropriate driver corresponding to your OS to the `resources` directory.
-- secure-test-automation for encrypting sensitive data
 
 ### Local Usage
 
@@ -39,14 +37,16 @@ A simple UI automation framework built with:
    ```bash
    pip install poetry
    poetry shell
+   poetry env info
+   copy `Executable: path to virtual env` -> Add Interpreter -> Poetry Environment -> Existing environment -> add Executable -> Apply
    poetry install
    ```
+   then specify your poetry env
 3. Create a `.env` file and add:
    ```plaintext
    DEV_URL = "your-dev-project-url"
    STAG_URL = "your-staging-project-url"
    ```
-   - Rename the `chromedriver` to `local` if you want to run tests locally.
 
 4. If you prefer not to use environment variables, add your references to the properties file:
    ```python
@@ -63,18 +63,6 @@ A simple UI automation framework built with:
 - #### [Chrome Drivers](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 - #### [Firefox Drivers](https://github.com/mozilla/geckodriver)
 
-### TODO
-
-| Item                                                                                                        | Status                                                   |
-|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| 1. Drivers factory: local, remote, [Chrome, Firefox]                                                      | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 2. `pytest.ini` config: addopts, errors, markers                                                          | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 3. Environments: dev, stag, prod                                                                          | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 4. Secrets                                                                                                | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 5. Utilities: YAML reader, logger                                                                          | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 6. BasePage: wait strategy, base actions                                                                  | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 7. Properties: make properties helper                                                                       | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
-| 8. CI: GitHub Actions: run tests, publish reports, take screenshots on failure (check test summary artifacts) | ![Status](https://img.shields.io/badge/DONE-brightgreen)      |
 
 ### CI: GitHub Actions
 
