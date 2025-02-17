@@ -17,8 +17,8 @@ jobs:
 
       - name: Run Qodana
         uses: JetBrains/qodana-action@v2024.1
-        with:
-          args: "--baseline,qodana.sarif.json"
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA }}
 
       - name: Upload Qodana Report
         uses: actions/upload-artifact@v4
