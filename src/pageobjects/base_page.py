@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import Tuple, Optional, Literal
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
@@ -10,7 +9,7 @@ from utils.helpers import timing
 from utils.logger import log
 
 # Type alias for locators
-Locator = Tuple[By, str]
+Locator = Tuple[str, str]
 
 
 class WaitType(Enum):
